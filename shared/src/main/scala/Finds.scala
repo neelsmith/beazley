@@ -1,0 +1,117 @@
+package edu.holycross.shot.beazley
+
+
+
+import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.Map
+import scala.scalajs.js
+import js.annotation.JSExport
+
+/** A collection of [[Find]]s.
+*
+* @param finds Vector of [[Find]]s in this collection.
+*/
+@JSExport case class Finds(finds: Vector[Find])  {
+  val preface = """<?xml version="1.0" encoding="UTF-8"?>
+  <kml xmlns="http://www.opengis.net/kml/2.2">
+    <Document>
+    <Style id="group1">
+      <IconStyle>
+        <scale>0.5</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="group2">
+      <IconStyle>
+        <Icon>
+          <scale>1.0</scale>
+            <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="group3">
+      <IconStyle>
+        <Icon>
+          <scale>8.0</scale>
+            <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="group4">
+      <IconStyle>
+        <Icon>
+          <scale>16.0</scale>
+            <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="group5">
+      <IconStyle>
+        <Icon>
+          <scale>32.0</scale>
+            <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="group6">
+      <IconStyle>
+        <Icon>
+          <scale>64.0</scale>
+            <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+  """
+
+  /** Conclusion to KML document.
+  */
+  val trail = "</Document></kml>"
+
+
+  /** Number of hoards in the collection.
+  */
+  def size: Int = {
+    finds.size
+  }
+
+  /** Create a new HoardCollection containing only
+  * hoards with known geographic location.
+  */
+  def located: Finds = {
+    Finds(finds.filter(_.pt !=  None))
+  }
+
+
+
+
+
+  /** Set of mints represented in this collection
+  * of hoards.
+
+  def mintSet: Set[String] = {
+    hoards.flatMap(_.mints).toSet
+  }
+*/
+
+
+
+  def toKml: String = {
+    preface + finds.map(_.toKml).mkString("\n") + trail
+  }
+
+
+
+}
+
+
+// factory for making Finds from csv source
+object Finds {
+
+  def apply(csv: String) : Finds = {
+    val finds = Array.empty[Find]
+    Finds(finds.toVector)
+  }
+
+}
