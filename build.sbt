@@ -1,7 +1,7 @@
 name := "Utilities for working with data from Beazley, ABV and ARV"
 
-//crossScalaVersions := Seq("2.10.6","2.11.8", "2.12.1")
-crossScalaVersions := Seq("2.11.8", "2.12.1")
+crossScalaVersions := Seq("2.10.6","2.11.8", "2.12.1")
+//crossScalaVersions := Seq("2.11.8", "2.12.1")
 
 
 lazy val root = project.in(file(".")).
