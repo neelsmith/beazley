@@ -8,16 +8,30 @@ import org.scalatest.FlatSpec
 class FindSourceSpec extends FlatSpec {
 
   "The FindSource object"  should "be able to instantiate a single Find from a CSV String" in {
-    val oneLine = "Sophilos,6, Berlin 1683, Amphora, Athens, Row A: two sphinxes. Row B: Two eagles with serpents in their beaks., 579885"
+    val oneEntry = "Sophilos,6, Berlin 1683, Amphora, Athens, Row A: two sphinxes. Row B: Two eagles with serpents in their beaks., 579885"
 
-    val fnd = FindSource.fromCsv(oneLine)
+    val fnd = FindSource.fromCsv(oneEntry)
     fnd match {
       case f: Find => {
         assert(f.painter == "Sophilos")
         assert(f.shape == "Amphora")
-        assert(f.site == "Athens")    
+        assert(f.site == "Athens")
         val expectedGeo = Point(23.72551565874,37.97652566656,579885)
         assert (f.pt == Some(expectedGeo))
+      }
+      case _ => fail("Should have created a Find object.")
+    }
+  }
+
+  it should "create a Find object even when geography is unknown" in {
+    val oneEntry = "Sophilos,1, Athens 991, Neck-amphora; slender; long-necked: loutrophoros, Vourva, Three rows of animals on the body. Middle row: litany of animals. Upper: two rows of animals, ?"
+    val fnd = FindSource.fromCsv(oneEntry)
+    fnd match {
+      case f: Find => {
+        assert(f.painter == "Sophilos")
+        assert(f.shape == "Neck-amphora; slender; long-necked: loutrophoros")
+        assert(f.site == "Vourva")
+        assert (f.pt == None)
       }
       case _ => fail("Should have created a Find object.")
     }

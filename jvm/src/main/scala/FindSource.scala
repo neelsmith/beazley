@@ -21,7 +21,9 @@ object FindSource {
   }
 
 
-  // create a single Find from a csv string
+  /** Create a single [[Find]] object from  csv string.
+  * @param csv One row of data in csv format.
+  */
   def fromCsv(csv: String) = {
     //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
     val cols = csv.split(",")
@@ -31,34 +33,45 @@ object FindSource {
       val painter = cols(0).trim
       val shape = cols(3).trim
       val site = cols(4).trim
-      val pt = ptFromString(cols(6).trim)
+      val pt = ptFromPleiades(cols(6).trim)
       Find(painter,shape,site,pt)
     }
   }
 
-  def ptFromString(s: String) : Option[Point] = {
+  /** Create optional [[Point]] object from a pleaiades identifier.
+  *
+  * @param pleiadesId Numeric identifier used in Pleiades project URIs.
+  */
+  def ptFromPleiades(pleiadesId: String) : Option[Point] = {
     try {
-      val n = s.toInt
+      val n = pleiadesId.toInt
       coordsForId(n)
     } catch {
       case e: Throwable => None
     }
   }
 
-    // we don't need no steekin json parser
-    def coordsForId(pleiadesNum: Integer): Option[Point] = {
-      try {
-        val fetch = "curl https://pleiades.stoa.org/places/" + pleiadesNum + "/json"
-        val res = fetch.!!
-        if (res.contains("reprP")) {
-          val filt =res.split("reprP")
-          val pt2 = filt(1).split("\n").toVector
-          val s = pt2(1) + pt2(2)
-          val v = s.replaceAll("[ ]+","").split(",").toVector
-          Some(Point(v(0).toDouble, v(1).toDouble, pleiadesNum))
-        } else {
-          println("No reprPoint found for " + pleiadesNum)
-          None
+
+  /** Create Point object by looking up representative point
+  * value in Pleiades JSON representation of a place.
+  * We don't need no steekin json parser to get this: since pleiades
+  * output is machine generated, we can reliably rip it apart as raw string.
+  *
+  * @param pleiadesNum Numeric identifier used in Pleiades project URIs.
+  */
+  def coordsForId(pleiadesNum: Integer): Option[Point] = {
+    try {
+      val fetch = "curl https://pleiades.stoa.org/places/" + pleiadesNum + "/json"
+      val res = fetch.!!
+      if (res.contains("reprP")) {
+        val filt =res.split("reprP")
+        val pt2 = filt(1).split("\n").toVector
+        val s = pt2(1) + pt2(2)
+        val v = s.replaceAll("[ ]+","").split(",").toVector
+        Some(Point(v(0).toDouble, v(1).toDouble, pleiadesNum))
+      } else {
+        println("No reprPoint found for " + pleiadesNum)
+        None
         }
       } catch {
         case e: Throwable => None
