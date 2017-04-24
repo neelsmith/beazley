@@ -1,6 +1,6 @@
 # `beazley`
 
-`beazley` is a ross-compiled library for working with simple representations of data in Beazley's *ABV* and *ARV*.
+`beazley` is a cross-compiled library for working with simple representations of data in Beazley's *ABV* and *ARV*.
 
 
 ## Current version: not yet released.
