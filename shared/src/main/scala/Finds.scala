@@ -69,21 +69,18 @@ import js.annotation.JSExport
   */
   val trail = "</Document></kml>"
 
-
-  /** Number of hoards in the collection.
+  /** Number of finds in the collection.
   */
   def size: Int = {
     finds.size
   }
 
-  /** Create a new HoardCollection containing only
+  /** Create a new Finds collection containing only
   * hoards with known geographic location.
   */
   def located: Finds = {
     Finds(finds.filter(_.pt !=  None))
   }
-
-
 
 
 
@@ -95,8 +92,8 @@ import js.annotation.JSExport
   }
 */
 
-
-
+  /** Create KML representation of the full set of finds.
+  */
   def toKml: String = {
     preface + finds.map(_.toKml).mkString("\n") + trail
   }
@@ -106,11 +103,18 @@ import js.annotation.JSExport
 }
 
 
-// factory for making Finds from csv source
+
+/** Factory for making Finds from csv source
+*/
 object Finds {
 
+  /** String of data in `.csv` format.
+  */
   def apply(csv: String) : Finds = {
     val finds = Array.empty[Find]
+
+
+
     Finds(finds.toVector)
   }
 
