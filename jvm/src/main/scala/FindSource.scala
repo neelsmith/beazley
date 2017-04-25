@@ -16,10 +16,10 @@ object FindSource {
   *
   * @param fName Name of csv file.
   */
-  def findsFromFile(fName : String) = { //: Finds = {
+  def findsFromShortCsvFile(fName : String) = { //: Finds = {
     val lns = Source.fromFile(fName).getLines.toVector
     val edges = for (ln <- lns.drop(1)) yield {
-      fromCsv(ln)
+      fromShortCsv(ln)
     }
     Finds(edges)
   }
@@ -28,7 +28,7 @@ object FindSource {
   /** Create a single [[Find]] object from  csv string.
   * @param csv One row of data in csv format.
   */
-  def fromCsv(csv: String) = {
+  def fromShortCsv(csv: String) = {
     //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
     val cols = csv.split(",")
     if (cols.size < 5) {
@@ -72,7 +72,7 @@ object FindSource {
         val pt2 = filt(1).split("\n").toVector
         val s = pt2(1) + pt2(2)
         val v = s.replaceAll("[ ]+","").split(",").toVector
-        Some(Point(v(0).toDouble, v(1).toDouble, pleiadesNum))
+        Some(Point(v(0).toDouble,v(1).toDouble, pleiadesNum))
       } else {
         println("No reprPoint found for " + pleiadesNum)
         None

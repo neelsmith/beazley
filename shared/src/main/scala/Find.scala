@@ -7,56 +7,50 @@ import js.annotation.JSExport
 
 @JSExport case class Find(painter: String, shape: String, site: String, pt: Option[Point]) {
 
+  def toCsv: String = {
+    pt match {
+      case None => {
+        s"${painter},${shape},${site},,,"
+      }
+      case _ => {
+        val geo = pt.get
+        s"${painter},${shape},${site},${geo.x},${geo.y},${geo.pleiadesId}"
+      }
+    }
+  }
+
   def toKml: String = {
-    raw"""<Placemark>
+    pt match {
+      case None => ""
+      case p: Option[Point] =>  raw"""<Placemark>
     <name>${site}</name>
     <description><p>${painter}, ${shape}.  Found at ${site}</p>
     </description>
     <styleUrl>#mint_style</styleUrl>
     <Point>
-      <coordinates>${pt},0</coordinates>
+      <coordinates>${pt.get},0</coordinates>
     </Point>
     </Placemark>"""
+    }
   }
 }
 
 
-// Factory
-/*
-object Find {
-  def apply(csv: String) = {
-    //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
-    val cols = csv.split(",")
-    if (cols.size < 5) {
-      throw new Exception("Find: too few columns in " + csv)
-    } else {
-      val painter = cols(0)
-      val shape = cols(3)
-      val site = cols(4)
-      val pt = ptFromString(cols(6))
-      Find(painter,shape,site,pt)
-    }
-  }
+// Factory for making from csv
+@JSExport  object Find {
 
-
-  // we don't need no steekin json parser
-  def coordsForId(pleiadesNum: Integer): Option[Point] = {
-    try {
-      val fetch = "curl https://pleiades.stoa.org/places/" + pleiadesNum + "/json"
-      val res = fetch.!!
-      if (res.contains("reprP")) {
-        val filt =res.split("reprP")
-        val pt2 = filt(1).split("\n").toVector
-        val s = pt2(1) + pt2(2)
-        val v = s.replaceAll("[ ]+","").split(",").toVector
-        Some(Point(v(0).toDouble, v(1).toDouble, pleiadesNum))
+    def apply(csv: String): Find = {
+      val cols = csv.split(",")
+      val painter = cols(0).trim
+      val shape = cols(1).trim
+      val site = cols(2).trim
+      val lon = cols(3).trim
+      val lat = cols(4).trim
+      val pleiades = cols(5).trim
+      if ((lon.isEmpty) || (lat.isEmpty) || (pleiades.isEmpty) ) {
+        Find(painter,shape,site,None)
       } else {
-        println("No reprPoint found for " + id)
-        None
+        Find(painter,shape,site,Some(Point(lon.toDouble,lat.toDouble,pleiades.toInt)))
       }
-    } catch {
-      case e: Throwable => None
     }
-  }
 }
-*/
