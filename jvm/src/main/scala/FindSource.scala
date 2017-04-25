@@ -30,15 +30,20 @@ object FindSource {
   */
   def fromShortCsv(csv: String) = {
     //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
-    val cols = csv.split(",")
-    if (cols.size < 5) {
-      throw new Exception("Find: too few columns in " + csv)
+    val cols = csv.replaceAll(",,",", ,").split(",")
+    if (cols.size < 6) {
+      throw new Exception(s"Find: too few columns (${cols.size}) in " + csv)
     } else {
       val painter = cols(0).trim
       val shape = cols(3).trim
       val site = cols(4).trim
-      val pt = ptFromPleiades(cols(6).trim)
-      Find(painter,shape,site,pt)
+      if (cols.size > 6) {
+        val pt = ptFromPleiades(cols(6).trim)
+        Find(painter,shape,site,pt)
+      } else {
+        Find(painter,shape,site,None)
+      }
+
     }
   }
 
