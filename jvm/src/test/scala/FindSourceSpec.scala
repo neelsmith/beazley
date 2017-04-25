@@ -37,4 +37,17 @@ class FindSourceSpec extends FlatSpec {
     }
   }
 
+  it should "be able to create a Finds collection from a csv file" in {
+    val src = "jvm/src/test/resources/sophilos.csv"
+    val findsCollection = FindSource.findsFromFile(src)
+    findsCollection match {
+      case fc: Finds => {
+        assert(fc.size == 40)
+      }
+      case _ => fail("Should have created  Finds collection.")
+    }
+  }
+
+
+
 }

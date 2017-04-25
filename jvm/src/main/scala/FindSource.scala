@@ -16,8 +16,12 @@ object FindSource {
   *
   * @param fName Name of csv file.
   */
-  def findsFromFile(fName : String) : Finds = {
-    Finds(Source.fromFile(fName).getLines.mkString("\n"))
+  def findsFromFile(fName : String) = { //: Finds = {
+    val lns = Source.fromFile(fName).getLines.toVector
+    val edges = for (ln <- lns.drop(1)) yield {
+      fromCsv(ln)
+    }
+    Finds(edges)
   }
 
 

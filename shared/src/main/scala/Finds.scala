@@ -97,25 +97,25 @@ import js.annotation.JSExport
   def toKml: String = {
     preface + finds.map(_.toKml).mkString("\n") + trail
   }
-
-
-
 }
 
 
 
 /** Factory for making Finds from csv source
 */
+
+// NO. Must be in jvm subproject because it relies
+// on fetching from pleiades to resolve geographic data.
 object Finds {
 
   /** String of data in `.csv` format.
-  */
+
   def apply(csv: String) : Finds = {
     val finds = Array.empty[Find]
 
 
 
     Finds(finds.toVector)
-  }
+  }*/
 
 }
