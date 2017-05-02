@@ -14,8 +14,10 @@ class FindSourceSpec extends FlatSpec {
     fnd match {
       case f: Find => {
         assert(f.painter == "Sophilos")
-        assert(f.shape == "Amphora")
-        assert(f.site == "Athens")
+
+        val regularizedShape = "amphora"
+        assert(f.shape == regularizedShape)
+        assert(f.site == "Athens 579885")
         val expectedGeo = Point(23.72551565874,37.97652566656,579885)
         assert (f.pt == Some(expectedGeo))
       }
@@ -29,7 +31,8 @@ class FindSourceSpec extends FlatSpec {
     fnd match {
       case f: Find => {
         assert(f.painter == "Sophilos")
-        assert(f.shape == "Neck-amphora; slender; long-necked: loutrophoros")
+        val regularizedShape = "amphora"
+        assert(f.shape == regularizedShape)
         assert(f.site == "Vourva")
         assert (f.pt == None)
       }

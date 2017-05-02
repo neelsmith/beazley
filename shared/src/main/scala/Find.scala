@@ -7,6 +7,17 @@ import js.annotation.JSExport
 
 @JSExport case class Find(painter: String, shape: String, site: String, pt: Option[Point]) {
 
+
+
+  /** Extract pleiades ID from site
+  *
+  */
+  def pleiades: String = {
+    val re = "[^0-9]".r
+    re.replaceAllIn(site,"")
+  }
+
+
   def toCsv: String = {
     pt match {
       case None => {

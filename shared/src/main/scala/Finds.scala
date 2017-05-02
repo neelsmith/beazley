@@ -90,6 +90,15 @@ import js.annotation.JSExport
 
   }
 
+
+
+
+  def bySite: scala.collection.immutable.Map[String,Finds] = {
+    val sites = located.finds.groupBy(_.pleiades)
+    sites.map{ case (k,v) => (k,Finds(v)) }
+
+  }
+
   /** Set of mints represented in this collection
   * of hoards.
 
