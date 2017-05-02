@@ -35,7 +35,7 @@ object FindSource {
       throw new Exception(s"Find: too few columns (${cols.size}) in " + csv)
     } else {
       val painter = cols(0).trim
-      val shape = cols(3).trim
+      val shape = Find.nameForString(cols(3).trim)
       val site = cols(4).trim
       if (cols.size > 6) {
         val pt = ptFromPleiades(cols(6).trim)
