@@ -84,6 +84,12 @@ import js.annotation.JSExport
 
 
 
+  def byShape: scala.collection.immutable.Map[String,Finds] = {
+    val shapes = finds.groupBy(_.shape)
+    shapes.map{ case (k,v) => (k,Finds(v)) }
+
+  }
+
   /** Set of mints represented in this collection
   * of hoards.
 
