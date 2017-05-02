@@ -39,7 +39,11 @@ object FindSource {
       val site = cols(4).trim
       if (cols.size > 6) {
         val pt = ptFromPleiades(cols(6).trim)
-        Find(painter,shape,site,pt)
+        pt match {
+          case None =>  Find(painter,shape,site,None)
+          case _ => Find(painter,shape,site + " " + cols(6).trim,pt)
+        }
+
       } else {
         Find(painter,shape,site,None)
       }
