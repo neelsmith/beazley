@@ -26,7 +26,7 @@ object FindsSource {
   }
 
 
-  def fromShortList(cex: String, delimiter: String = "#") ={
+  def fromShortList(cex: String, delimiter: String = "#") : Find ={
     //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
     val cols = cex.replaceAll("${delimiter}${delimiter}","${delimiter} ${delimiter}").split(delimiter)
     if (cols.size < 6) {
