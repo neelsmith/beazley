@@ -1,6 +1,6 @@
-name := "Utilities for working with data from Beazley, ABV and ARV"
+name := "Beazley lists"
 
-crossScalaVersions := Seq("2.10.6","2.11.8", "2.12.1")
+crossScalaVersions := Seq("2.10.6","2.11.8", "2.12.4")
 
 lazy val root = project.in(file(".")).
     aggregate(crossedJVM, crossedJS).
