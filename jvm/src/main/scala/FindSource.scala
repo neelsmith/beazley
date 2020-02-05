@@ -10,24 +10,62 @@ import scala.collection.mutable.Map
 
 /** Factory for generating a Vector of [[Find]]s.
 */
-object FindSource {
+object FindsSource {
 
   /** Create a Vector of [[Find]]s from a file in .csv format
   *
   * @param fName Name of csv file.
   */
-  def findsFromShortCsvFile(fName : String) = { //: Finds = {
+  def fromFile(fName : String, delimiter: String = "#") : Finds = {
     val lns = Source.fromFile(fName).getLines.toVector
-    val edges = for (ln <- lns.drop(1)) yield {
-      fromShortCsv(ln)
+    val edges = for (ln <- lns.tail) yield {
+      //fromShortCsv(ln)
     }
-    Finds(edges)
+    //Finds(edges)
+    Finds(Vector.empty[Find])
   }
+
+
+  def fromShortList(cex: String, delimiter: String = "#") ={
+    //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
+    val cols = cex.replaceAll("${delimiter}${delimiter}","${delimiter} ${delimiter}").split(delimiter)
+    if (cols.size < 6) {
+      throw new Exception(s"Find: too few columns (${cols.size}) in " + cex)
+    } else {
+      val painter = cols(0).trim
+      val shape = Find.shapeForString(cols(3).trim)
+      val site = cols(4).trim
+      if (cols.size > 6) {
+        val pt = ptFromPleiades(cols(6).trim)
+        pt match {
+          case None =>  Find(painter,shape,site,None)
+          case _ => Find(painter,shape,site + " " + cols(6).trim,pt)
+        }
+
+      } else {
+        Find(painter,shape,site,None)
+      }
+    }
+  }
+
+    /** Create optional [[Point]] object from a pleaiades identifier.
+    *
+    * @param pleiadesId Numeric identifier used in Pleiades project URIs.
+    */
+    def ptFromPleiades(pleiadesId: String) : Option[Point] = {
+      try {
+        val n = pleiadesId.toInt
+        coordsForId(n)
+      } catch {
+        case e: Throwable => None
+      }
+    }
 
 
   /** Create a single [[Find]] object from  csv string.
   * @param csv One row of data in csv format.
   */
+  /*
   def fromShortCsv(csv: String) = {
     //Painter,Beazley Number, Musuem ID, Shape, Find-spot, Comments, Geography
     val cols = csv.replaceAll(",,",", ,").split(",")
@@ -50,19 +88,8 @@ object FindSource {
 
     }
   }
+*/
 
-  /** Create optional [[Point]] object from a pleaiades identifier.
-  *
-  * @param pleiadesId Numeric identifier used in Pleiades project URIs.
-  */
-  def ptFromPleiades(pleiadesId: String) : Option[Point] = {
-    try {
-      val n = pleiadesId.toInt
-      coordsForId(n)
-    } catch {
-      case e: Throwable => None
-    }
-  }
 
 
   /** Create Point object by looking up representative point

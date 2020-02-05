@@ -1,11 +1,20 @@
 package edu.holycross.shot.beazley
 
-
 import scala.scalajs.js
 import js.annotation.JSExport
 
-
-@JSExport case class Find(painter: String, shape: String, site: String, pt: Option[Point]) {
+/** Minimal information about find spot of an attributed vase.
+*
+* @param painter Attributed painter.
+* @param shape Shape of piece.
+* @param site Name of site.
+* @param pt Lat-lon coordinates if known.
+*/
+@JSExport case class Find(
+  painter: String,
+  shape: Option[Shape],
+  site: String,
+  pt: Option[Point]) {
 
 
 
@@ -18,19 +27,21 @@ import js.annotation.JSExport
   }
 
 
-  def toCsv: String = {
+  /** Representation of Find as delimited text file.*/
+  def delimitedText(delimiter: String = "#"): String = {
     pt match {
       case None => {
-        s"${painter},${shape},${site},,,"
+        s"${painter}${delimiter}${shape}${delimiter}${site}${delimiter}${delimiter}${delimiter}"
       }
       case _ => {
         val geo = pt.get
-        s"${painter},${shape},${site},${geo.x},${geo.y},${geo.pleiadesId}"
+        s"${painter}${delimiter}${shape}${delimiter}${site}${delimiter}${geo.x}${delimiter}${geo.y}${delimiter}${geo.pleiadesId}"
       }
     }
   }
 
-  def toKml: String = {
+  /** Representation of find as KML string usable in Google maps. */
+  def kml: String = {
     pt match {
       case None => ""
       case p: Option[Point] =>  raw"""<Placemark>
@@ -47,13 +58,17 @@ import js.annotation.JSExport
 }
 
 
-// Factory for making from csv
-@JSExport  object Find {
+/** Factory for making [[Find]] objects.*/
+@JSExport object Find {
 
-  def apply(csv: String): Find = {
-    val cols = csv.split(",")
+  /** Create [[Find]] from  delimited text representation.
+  *
+  * @param cex Delimited text representation of a Find.
+  */
+  def apply(cex: String, delimiter: String = "#"): Find = {
+    val cols = cex.split(delimiter)
     val painter = cols(0).trim
-    val shape = nameForString(cols(1).trim)
+    val shape = shapeForString(cols(1).trim)
     val site = cols(2).trim
     val lon = cols(3).trim
     val lat = cols(4).trim
@@ -66,7 +81,16 @@ import js.annotation.JSExport
   }
 
 
+  def shapeForString(shape: String) : Option[Shape] = {
+    shape.toLowerCase match {
+      case shp if shp.contains("krater") => Some(Krater)
+      case _ => None
+    }
+  }
 
+  /** Regularize shape names.
+  * @param shape String value for shape.
+  */
   def nameForString(shape: String) : String = {
     shape.toLowerCase match {
       case k if k.contains("krater") => "krater"
@@ -92,4 +116,5 @@ import js.annotation.JSExport
 
 
   }
+
 }

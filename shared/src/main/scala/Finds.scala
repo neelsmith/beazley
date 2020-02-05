@@ -83,12 +83,12 @@ import js.annotation.JSExport
   }
 
 
-
+/*
   def byShape: scala.collection.immutable.Map[String,Finds] = {
     val shapes = finds.groupBy(_.shape)
     shapes.map{ case (k,v) => (k,Finds(v)) }
-
   }
+  */
 
 
 
@@ -110,6 +110,6 @@ import js.annotation.JSExport
   /** Create KML representation of the full set of finds.
   */
   def toKml: String = {
-    preface + finds.map(_.toKml).mkString("\n") + trail
+    preface + finds.map(_.kml).mkString("\n") + trail
   }
 }
