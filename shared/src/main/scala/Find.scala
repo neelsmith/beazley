@@ -29,13 +29,14 @@ import js.annotation.JSExport
 
   /** Representation of Find as delimited text file.*/
   def delimitedText(delimiter: String = "#"): String = {
+    val shapeString = shape.getOrElse("?")
     pt match {
       case None => {
-        s"${painter}${delimiter}${shape}${delimiter}${site}${delimiter}${delimiter}${delimiter}"
+        s"${painter}${delimiter}${shapeString}${delimiter}${site}${delimiter}${delimiter}${delimiter}"
       }
       case _ => {
         val geo = pt.get
-        s"${painter}${delimiter}${shape}${delimiter}${site}${delimiter}${geo.x}${delimiter}${geo.y}${delimiter}${geo.pleiadesId}"
+        s"${painter}${delimiter}${shapeString}${delimiter}${site}${delimiter}${geo.x}${delimiter}${geo.y}${delimiter}${geo.pleiadesId}"
       }
     }
   }
@@ -67,18 +68,26 @@ import js.annotation.JSExport
   */
   def apply(cex: String, delimiter: String = "#"): Find = {
     val cols = cex.split(delimiter)
-    val painter = cols(0).trim
-    val shape = shapeForString(cols(1).trim)
-    val site = cols(2).trim
-    val lon = cols(3).trim
-    val lat = cols(4).trim
-    val pleiades = cols(5).trim
-    if ((lon.isEmpty) || (lat.isEmpty) || (pleiades.isEmpty) ) {
-      Find(painter,shape,site,None)
-    } else {
-      Find(painter,shape,site,Some(Point(lon.toDouble,lat.toDouble,pleiades.toInt)))
+    cols.size match {
+      case bad if (bad < 6) => throw new Exception("Too few columns found in delimited text source: only " + cols.size + " columns in:\n" + cex)
+
+      case _  => {
+        val painter = cols(0).trim
+        val shape = shapeForString(cols(1).trim)
+        val site = cols(2).trim
+        val lon = cols(3).trim
+        val lat = cols(4).trim
+        val pleiades = cols(5).trim
+        if ((lon.isEmpty) || (lat.isEmpty) || (pleiades.isEmpty) ) {
+          Find(painter,shape,site,None)
+        } else {
+          Find(painter,shape,site,Some(Point(lon.toDouble,lat.toDouble,pleiades.toInt)))
+        }
+      }
+
+
     }
-  }
+}
 
 
   def shapeForString(shape: String) : Option[Shape] = {
